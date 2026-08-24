@@ -1,0 +1,15 @@
+# dependencies (only needed to re-run tools/crop-logo.js)
+node_modules/
+package-lock.json
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+.vscode/
+.idea/
+
+# preview export from the logo tool — the .webp and the data URI are the
+# artefacts that matter; the PNG is just for eyeballing the cutout
+assets/spade.png

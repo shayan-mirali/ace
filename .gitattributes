@@ -1,0 +1,9 @@
+* text=auto
+
+# shell scripts must keep LF or they break under sh on Linux/macOS
+*.sh text eol=lf
+
+# binaries — never touch line endings
+*.png  -text
+*.webp -text
+*.datauri -text

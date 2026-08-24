@@ -93,6 +93,44 @@ stay correct if the artwork changes:
 - **The work section's height is computed from its real overflow.** Hardcoding
   a tall value leaves you scrolling past a stationary row on wide screens.
 
+## Responsive
+
+Verified at 320, 360, 390, 430 and 768 wide: no horizontal overflow, no tap
+target under 40px, no element clashes, no console errors. The audit that
+checks this lives in the commit history rather than the repo — re-run it by
+driving the page with Playwright if you change layout substantially.
+
+Four things that actually broke, and why:
+
+- **`repeat(3, 1fr)` on the hero stats forced 318px of content into a 320px
+  phone.** Grid and flex children default to `min-width: auto`, so a track
+  can't shrink below its widest un-wrappable word — three uppercase labels
+  with letter-spacing were enough. Fixed with `min-width: 0` plus a two-column
+  fallback.
+- **`aspect-ratio: 1` on a full-width hero stage** made the mark as tall as the
+  viewport was wide, which is most of why the hero ran to 1200px. Capped at
+  320px and centred.
+- **The word cloud became illegible.** The mark scales to ~0.6 on a phone,
+  which drops the 9–11px filler tokens to about 5px. On screens under 860px
+  the page now packs only the fourteen real languages, sized up 18%, so the
+  smallest still renders around 13px.
+- **Nodes cut straight through the mark at tablet widths.** Their offsets were
+  a fixed `30vw / 19vh`. They're now measured from the mark's rendered box:
+  beside it when it genuinely fits, stacked clear above and below when it
+  doesn't.
+
+The reticle is sized from the mark in `fitAsm()` rather than from a viewport
+clamp, so it always frames the mark instead of guessing.
+
+## Favicon
+
+`tools/crop-logo.js` also emits the favicons, cropping tight to what is
+actually opaque above alpha 170 — the hero padding that keeps the rim glow
+looking right is wasted space at 32px square.
+
+- 64px is inlined as a data URI (~13KB) so it works from `file://` too
+- 180px ships as `assets/favicon.png` for the iOS home-screen icon
+
 ## Before this goes live
 
 - [ ] **Contact form has no endpoint.** It validates and reports, but sends

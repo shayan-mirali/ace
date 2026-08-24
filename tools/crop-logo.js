@@ -111,12 +111,37 @@ const OUT = 'C:/Users/karac/OneDrive/Desktop/AceDev/assets';
     }
     ox.putImageData(id, 0, 0);
 
+    // ---- favicons ------------------------------------------------------
+    // Crop tight to what is actually opaque: the padding that keeps the rim
+    // glow looking right in the hero just wastes pixels at 32px square.
+    let fx0 = T, fy0 = T, fx1 = 0, fy1 = 0;
+    for (let y = 0; y < T; y++)
+      for (let x = 0; x < T; x++)
+        if (d2[((y * T + x) << 2) + 3] > 170){   // the mark itself, not its halo
+          if (x < fx0) fx0 = x; if (x > fx1) fx1 = x;
+          if (y < fy0) fy0 = y; if (y > fy1) fy1 = y;
+        }
+    const fw = fx1 - fx0, fh = fy1 - fy0, fside = Math.max(fw, fh);
+    const icon = (px) => {
+      const ic = document.createElement('canvas');
+      ic.width = ic.height = px;
+      const c2 = ic.getContext('2d');
+      c2.imageSmoothingQuality = 'high';
+      const s = px / fside * 0.94;                 // a hair of breathing room
+      c2.drawImage(o, fx0, fy0, fw, fh,
+        (px - fw * s) / 2, (px - fh * s) / 2, fw * s, fh * s);
+      return ic.toDataURL('image/png');
+    };
+
     return {
       src: { W, H }, bands, spade: { x0, y0, x1, y1 },
       crop: { sx: cx0, sy: cy0, w: cw, h: ch, side: Math.round(side) },
       keyed: { background: seen.reduce((n, v) => n + v, 0), fullyClear: cleared, total: T * T },
+      iconBox: { x: fx0, y: fy0, w: fw, h: fh },
       webp: o.toDataURL('image/webp', 0.94),
       png:  o.toDataURL('image/png'),
+      fav64: icon(64),
+      fav180: icon(180),
     };
   }, 'data:image/png;base64,' + b64);
 
@@ -137,5 +162,13 @@ const OUT = 'C:/Users/karac/OneDrive/Desktop/AceDev/assets';
   }
   fs.writeFileSync(path.join(OUT, 'spade.webp.datauri'), res.webp);
   console.log('data uri chars:', res.webp.length);
+
+  const b = res.iconBox;
+  console.log('icon crop     :', b.w + 'x' + b.h, 'at', b.x + ',' + b.y);
+  for (const [name, uri] of [['favicon-64.datauri', res.fav64], ['favicon-180.datauri', res.fav180]]) {
+    fs.writeFileSync(path.join(OUT, name), uri);
+    console.log(name.padEnd(20) + ':', (uri.length / 1024).toFixed(1) + 'KB as data uri');
+  }
+  fs.writeFileSync(path.join(OUT, 'favicon.png'), Buffer.from(res.fav180.split(',')[1], 'base64'));
   await browser.close();
 })();

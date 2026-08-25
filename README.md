@@ -147,12 +147,26 @@ All in `:root` at the top of `src/page.html`, taken off the logo:
 
 | token | value | role |
 |---|---|---|
-| `--void` | `#03060e` | page ground |
-| `--beam` | `#2f8bff` | the logo's rim glow, primary accent |
-| `--plasma` | `#6ff2ff` | highlights, HUD, active states |
-| `--ice` / `--dim` | `#d7e7ff` / `#8098bb` | text, blue-biased neutrals |
-| `--chrome` | 10-stop gradient | the spade + headline material |
-| `--holo` | cyan→violet→magenta→gold | iridescent edges only |
+| `--void` | `#050a14` | page ground, navy not grey |
+| `--beam` | `#2276ff` | royal blue, the primary accent |
+| `--beam-lit` | `#3d8bff` | the emphasis half of a headline |
+| `--plasma` | `#5b9dff` | HUD, labels, active states |
+| `--ice` / `--dim` | `#dde7f5` / `#9fb2c9` | text |
+| `--chrome` | 10-stop gradient | the mark and display type |
+| `--holo` | blue metallic sweep | iridescent edges |
+
+Taken from the brand collateral, which is monochrome royal blue. Two rules
+came out of matching it:
+
+- **No cyan and no rainbow.** An earlier pass used `#6ff2ff` for highlights
+  and a cyan-violet-magenta-gold sweep for card edges. Both pulled the page
+  teal and read as someone else's brand. Everything is now one blue, stepped.
+- **Headlines pair white with blue**, the way the collateral sets "DIGITAL"
+  against "REALITY" — `.accent` on the second half. Chrome-on-chrome loses
+  that contrast, so chrome is reserved for the mark and the hero H1.
+
+Ambient blue blooms sit behind the hero, capabilities and contact. Without
+them the navy reads flat black rather than deep.
 
 Type: **Chakra Petch** (display), **Sora** (body), **JetBrains Mono** (HUD).
 
